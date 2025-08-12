@@ -1,0 +1,10 @@
+[
+  {
+    "id": "11c87b74-ea15-42e8-a4d1-7db6f0137828",
+    "productId": "e94255f0-9b1f-40a6-a1bd-f0571a6f9a5d",
+    "phone": "03001234567",
+    "address": "House 1, Street 2, Lahore",
+    "status": "pending",
+    "createdAt": "2025-08-12T23:17:02.262Z"
+  }
+]

@@ -1,0 +1,18 @@
+[
+  {
+    "id": "e94255f0-9b1f-40a6-a1bd-f0571a6f9a5d",
+    "category": "Charger",
+    "name": "Fast Charger 25W",
+    "images": [
+      "https://i.ibb.co/DR4MsW6/charger1.jpg",
+      "https://i.ibb.co/0q8yM7j/charger2.jpg",
+      "https://i.ibb.co/2N1qg3M/charger3.jpg",
+      "https://i.ibb.co/Bj0sGVR/charger4.jpg"
+    ],
+    "price": 1999,
+    "discountPercent": 15,
+    "description": "Original 25W fast charger",
+    "createdAt": "2025-08-12T23:16:57.567Z",
+    "updatedAt": "2025-08-12T23:16:57.567Z"
+  }
+]

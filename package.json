@@ -1,0 +1,30 @@
+{
+  "name": "mobile-store",
+  "version": "1.0.0",
+  "description": "mobaile",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js",
+    "dev": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/faiqmian2007-netizen/myweb.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/faiqmian2007-netizen/myweb/issues"
+  },
+  "homepage": "https://github.com/faiqmian2007-netizen/myweb#readme",
+  "type": "module",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "body-parser": "^2.2.0",
+    "express": "^5.1.0",
+    "express-session": "^1.18.2",
+    "uuid": "^11.1.0"
+  }
+}

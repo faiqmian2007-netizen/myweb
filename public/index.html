@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FlexMobile Shop</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b1020;
+      --card: #111936;
+      --muted: #8aa0c7;
+      --text: #e7efff;
+      --accent: #4f7cff;
+      --accent-2: #00d4ff;
+      --danger: #ff4f6d;
+      --success: #33d69f;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; background: linear-gradient(180deg, #0b1020, #0a0f1d);
+      color: var(--text); font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      min-height: 100vh; display: flex; flex-direction: column;
+    }
+    header {
+      position: sticky; top: 0; z-index: 10;
+      background: rgba(10, 15, 29, 0.8); backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 16px; }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .logo {
+      width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 6px 20px rgba(79, 124, 255, 0.4);
+    }
+    h1 { font-size: 20px; margin: 0; letter-spacing: 0.5px; }
+
+    .filters {
+      display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr; gap: 12px; margin-top: 12px;
+    }
+    .input, .select, .button {
+      background: var(--card); color: var(--text); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px; padding: 10px 12px; outline: none;
+    }
+    .button { cursor: pointer; background: linear-gradient(135deg, var(--accent), var(--accent-2)); border: none; font-weight: 600; }
+
+    .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 16px; }
+    @media (max-width: 980px) { .grid { grid-template-columns: repeat(2, 1fr); } .filters { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
+
+    .card {
+      background: linear-gradient(180deg, rgba(17,25,54,0.7), rgba(17,25,54,0.4)); border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 14px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      display: flex; flex-direction: column;
+    }
+    .img-wrap { position: relative; width: 100%; padding-top: 62%; overflow: hidden; }
+    .img-wrap img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: opacity .4s ease; }
+    .content { padding: 12px; display: flex; flex-direction: column; gap: 6px; }
+    .name { font-weight: 700; font-size: 16px; }
+    .category { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+    .price-row { display: flex; align-items: center; gap: 8px; }
+    .price { font-size: 18px; font-weight: 700; }
+    .off { color: var(--success); font-weight: 600; }
+    .buy { margin-top: 8px; }
+
+    .footer { margin-top: auto; padding: 24px 0; text-align: center; color: var(--muted); }
+
+    .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 50; }
+    .modal { width: 100%; max-width: 420px; background: #0f1530; border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 16px; }
+    .modal h3 { margin: 0 0 10px; }
+    .row { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+    .toast { position: fixed; bottom: 20px; right: 20px; background: #0f1530; border: 1px solid rgba(255,255,255,0.08); padding: 10px 14px; border-radius: 10px; display: none; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container" style="display:flex; align-items:center; justify-content:space-between; gap: 12px;">
+      <div class="brand">
+        <div class="logo"></div>
+        <h1>FlexMobile Shop</h1>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="filters">
+      <input id="q" class="input" placeholder="Search products..." />
+      <input id="category" class="input" placeholder="Category (e.g. Charger)" />
+      <input id="minPrice" class="input" type="number" placeholder="Min Price" />
+      <input id="maxPrice" class="input" type="number" placeholder="Max Price" />
+      <select id="sort" class="select">
+        <option value="newest">Newest</option>
+        <option value="price_asc">Price: Low to High</option>
+        <option value="price_desc">Price: High to Low</option>
+      </select>
+    </div>
+    <div style="margin-top:8px; display:flex; gap:8px;">
+      <button class="button" onclick="applyFilters()">Search</button>
+      <button class="input" onclick="resetFilters()">Reset</button>
+    </div>
+
+    <div id="grid" class="grid"></div>
+  </main>
+
+  <div id="modalBg" class="modal-bg">
+    <div class="modal">
+      <h3>Cash on Delivery</h3>
+      <div class="row">
+        <label>Phone Number</label>
+        <input id="phone" class="input" placeholder="03xxxxxxxxx" />
+      </div>
+      <div class="row">
+        <label>Full Address</label>
+        <textarea id="address" class="input" rows="3" placeholder="House #, Street, Area, City"></textarea>
+      </div>
+      <div style="display:flex; gap:8px; justify-content:flex-end;">
+        <button class="input" onclick="closeModal()">Cancel</button>
+        <button class="button" onclick="confirmOrder()">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <footer class="footer">© <span id="year"></span> FlexMobile. Cash on Delivery.</footer>
+
+  <script>
+    const state = { products: [], selected: null };
+
+    function money(n) { return 'Rs ' + Number(n).toLocaleString(); }
+    function discounted(p) {
+      const off = (p.price * (p.discountPercent || 0)) / 100;
+      return Math.round((p.price - off) * 100) / 100;
+    }
+
+    function showToast(msg) {
+      const el = document.getElementById('toast');
+      el.textContent = msg; el.style.display = 'block';
+      setTimeout(() => { el.style.display = 'none'; }, 2500);
+    }
+
+    async function fetchProducts() {
+      const url = new URL(window.location.origin + '/api/products');
+      const q = document.getElementById('q').value.trim();
+      const category = document.getElementById('category').value.trim();
+      const minPrice = document.getElementById('minPrice').value.trim();
+      const maxPrice = document.getElementById('maxPrice').value.trim();
+      const sort = document.getElementById('sort').value;
+      if (q) url.searchParams.set('q', q);
+      if (category) url.searchParams.set('category', category);
+      if (minPrice) url.searchParams.set('minPrice', minPrice);
+      if (maxPrice) url.searchParams.set('maxPrice', maxPrice);
+      if (sort) url.searchParams.set('sort', sort);
+      const res = await fetch(url.toString());
+      const data = await res.json();
+      state.products = data.products || [];
+      render();
+    }
+
+    function render() {
+      const grid = document.getElementById('grid');
+      grid.innerHTML = '';
+      if (!state.products.length) {
+        grid.innerHTML = '<div style="grid-column: 1 / -1; text-align:center; color: var(--muted); padding: 20px;">No products</div>';
+        return;
+      }
+      for (const p of state.products) {
+        const card = document.createElement('div');
+        card.className = 'card';
+        const first = (p.images && p.images[0]) || 'https://i.imgur.com/9c3I1.jpg';
+        const second = (p.images && p.images[1]) || first;
+        card.innerHTML = `
+          <div class="img-wrap">
+            <img src="${first}" alt="${p.name}">
+          </div>
+          <div class="content">
+            <div class="category">${p.category || ''}</div>
+            <div class="name">${p.name}</div>
+            <div class="price-row">
+              <div class="price">${money(discounted(p))}</div>
+              ${p.discountPercent ? `<div class="off">${p.discountPercent}% off</div>` : ''}
+            </div>
+            <button class="button buy" onclick='openModal(${JSON.stringify(p)})'>Buy</button>
+          </div>
+        `;
+        grid.appendChild(card);
+      }
+    }
+
+    function applyFilters() { fetchProducts(); }
+    function resetFilters() {
+      document.getElementById('q').value = '';
+      document.getElementById('category').value = '';
+      document.getElementById('minPrice').value = '';
+      document.getElementById('maxPrice').value = '';
+      document.getElementById('sort').value = 'newest';
+      fetchProducts();
+    }
+
+    function openModal(p) {
+      state.selected = p;
+      document.getElementById('modalBg').style.display = 'flex';
+    }
+    function closeModal() {
+      state.selected = null;
+      document.getElementById('modalBg').style.display = 'none';
+    }
+
+    async function confirmOrder() {
+      const phone = document.getElementById('phone').value.trim();
+      const address = document.getElementById('address').value.trim();
+      if (!phone || !address) { showToast('Phone and address required'); return; }
+      const res = await fetch('/api/orders', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId: state.selected.id, phone, address })
+      });
+      const data = await res.json();
+      if (data && data.ok) { showToast('Order placed!'); closeModal(); }
+      else { showToast(data.error || 'Failed'); }
+    }
+
+    document.getElementById('year').textContent = new Date().getFullYear();
+    fetchProducts();
+  </script>
+</body>
+</html>

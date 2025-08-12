@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Login • FlexMobile</title>
+  <style>
+    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, sans-serif; background: #0b1020; color: #e7efff; display:flex; align-items:center; justify-content:center; min-height:100vh; }
+    .card { width: 100%; max-width: 380px; background: #101736; border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 18px; }
+    .title { font-weight: 700; margin-bottom: 8px; }
+    .muted { color: #9ab0d6; font-size: 14px; margin-bottom: 10px; }
+    .input { width: 100%; padding: 10px 12px; background: #0f1530; color: #e7efff; border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; margin-bottom: 10px; }
+    .button { width: 100%; padding: 10px 12px; border-radius: 10px; border: none; cursor: pointer; background: linear-gradient(135deg, #4f7cff, #00d4ff); color: white; font-weight: 700; }
+    .err { color: #ff6b81; margin-top: 8px; display:none; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="title">Admin Login</div>
+    <div class="muted">Enter your admin email and password.</div>
+    <input id="email" class="input" placeholder="Email" />
+    <input id="password" class="input" type="password" placeholder="Password" />
+    <button class="button" onclick="login()">Login</button>
+    <div id="err" class="err"></div>
+  </div>
+
+  <script>
+    function getParam(name) {
+      const u = new URL(window.location.href);
+      return u.searchParams.get(name);
+    }
+    async function login() {
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const code = getParam('code');
+      const res = await fetch('/admin/login?code=' + encodeURIComponent(code || ''), {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+      if (data.ok) {
+        location.href = '/admin/dashboard';
+      } else {
+        const err = document.getElementById('err');
+        err.textContent = data.error || 'Login failed';
+        err.style.display = 'block';
+      }
+    }
+  </script>
+</body>
+</html>

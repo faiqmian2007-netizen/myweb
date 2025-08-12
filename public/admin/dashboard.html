@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard • FlexMobile</title>
+  <style>
+    :root { --bg:#0b1020; --card:#101736; --muted:#9ab0d6; --text:#e7efff; --accent:#4f7cff; --accent2:#00d4ff; --success:#33d69f; --danger:#ff6b81; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--bg); color:var(--text); font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+    header { position:sticky; top:0; background:#0c1333aa; backdrop-filter: blur(8px); border-bottom: 1px solid rgba(255,255,255,0.08); padding:12px 16px; display:flex; justify-content:space-between; align-items:center; }
+    .container { width:100%; max-width:1200px; margin:0 auto; padding:16px; }
+    .grid { display:grid; grid-template-columns: 1fr 1fr; gap:16px; }
+    @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+    .card { background:var(--card); border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:14px; }
+    .title { font-weight:800; font-size:18px; margin-bottom:10px; }
+    .row { display:flex; gap:10px; margin-bottom:10px; }
+    .col { display:flex; flex-direction:column; gap:6px; width:100%; }
+    .input, .textarea, .select { width:100%; padding:10px 12px; background:#0f1530; color:var(--text); border:1px solid rgba(255,255,255,0.1); border-radius:10px; }
+    .button { padding:10px 12px; background: linear-gradient(135deg, var(--accent), var(--accent2)); border:none; color:white; font-weight:700; border-radius:10px; cursor:pointer; }
+    table { width:100%; border-collapse: collapse; }
+    th, td { padding:8px; border-bottom:1px solid rgba(255,255,255,0.08); text-align:left; }
+    .pill { padding:4px 8px; border-radius:999px; font-size:12px; }
+    .muted { color: var(--muted); }
+  </style>
+</head>
+<body>
+  <header>
+    <div>FlexMobile Admin</div>
+    <div style="display:flex; gap:8px; align-items:center;">
+      <span id="notif" class="pill" style="background:#17204a;">Orders: 0</span>
+      <button class="button" onclick="logout()">Logout</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="grid">
+      <div class="card">
+        <div class="title">Upload Product</div>
+        <div class="row">
+          <div class="col">
+            <label>Category</label>
+            <input id="category" class="input" placeholder="e.g. Charger, Cable, Headphone" />
+          </div>
+          <div class="col">
+            <label>Name</label>
+            <input id="name" class="input" placeholder="Product name" />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <label>Image 1 URL (imgbb)</label>
+            <input id="img1" class="input" placeholder="https://..." />
+          </div>
+          <div class="col">
+            <label>Image 2 URL</label>
+            <input id="img2" class="input" placeholder="https://..." />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <label>Image 3 URL</label>
+            <input id="img3" class="input" placeholder="https://..." />
+          </div>
+          <div class="col">
+            <label>Image 4 URL</label>
+            <input id="img4" class="input" placeholder="https://..." />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <label>Price (Rs)</label>
+            <input id="price" class="input" type="number" placeholder="1000" />
+          </div>
+          <div class="col">
+            <label>Discount %</label>
+            <input id="discount" class="input" type="number" placeholder="10" />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <label>Description</label>
+            <textarea id="desc" class="textarea" rows="4" placeholder="Short description"></textarea>
+          </div>
+        </div>
+        <div style="display:flex; justify-content:flex-end;">
+          <button class="button" onclick="upload()">Upload</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="title">Orders</div>
+        <div class="muted" style="margin-bottom:8px;">Latest customer orders (Cash on Delivery)</div>
+        <table>
+          <thead>
+            <tr><th>#</th><th>Product</th><th>Phone</th><th>Address</th><th>Status</th><th>Actions</th></tr>
+          </thead>
+          <tbody id="orders"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:16px;">
+      <div class="title">All Products</div>
+      <table>
+        <thead>
+          <tr><th>#</th><th>Category</th><th>Name</th><th>Price</th><th>Off %</th><th>Created</th><th>Actions</th></tr>
+        </thead>
+        <tbody id="products"></tbody>
+      </table>
+    </div>
+
+  </main>
+
+  <script>
+    const S = { orders: [], products: [] };
+    function money(n) { return 'Rs ' + Number(n).toLocaleString(); }
+
+    async function upload() {
+      const images = [img1.value, img2.value, img3.value, img4.value].filter(Boolean);
+      const payload = {
+        category: category.value.trim(),
+        name: name.value.trim(),
+        images,
+        price: Number(price.value || 0),
+        discountPercent: Number(discount.value || 0),
+        description: desc.value.trim(),
+      };
+      const res = await fetch('/admin/api/products', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      const data = await res.json();
+      if (data.ok) { await loadProducts(); clearForm(); alert('Uploaded'); }
+      else alert(data.error || 'Failed');
+    }
+
+    function clearForm() {
+      category.value = name.value = img1.value = img2.value = img3.value = img4.value = price.value = discount.value = desc.value = '';
+    }
+
+    async function loadProducts() {
+      const res = await fetch('/admin/api/products');
+      const data = await res.json();
+      S.products = data.products || [];
+      renderProducts();
+    }
+
+    function renderProducts() {
+      const tbody = document.getElementById('products');
+      tbody.innerHTML = '';
+      S.products.forEach((p, idx) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${idx + 1}</td>
+          <td>${p.category}</td>
+          <td>${p.name}</td>
+          <td>${money(p.price)}</td>
+          <td>${p.discountPercent || 0}</td>
+          <td>${new Date(p.createdAt).toLocaleString()}</td>
+          <td><button onclick="removeProduct('${p.id}')">Delete</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function removeProduct(id) {
+      if (!confirm('Delete this product?')) return;
+      const res = await fetch('/admin/api/products/' + id, { method: 'DELETE' });
+      const data = await res.json();
+      if (data.ok) loadProducts(); else alert('Failed');
+    }
+
+    async function loadOrders() {
+      const res = await fetch('/admin/api/orders');
+      const data = await res.json();
+      S.orders = data.orders || [];
+      renderOrders();
+    }
+
+    function renderOrders() {
+      const tbody = document.getElementById('orders');
+      tbody.innerHTML = '';
+      document.getElementById('notif').textContent = 'Orders: ' + S.orders.length;
+      S.orders
+        .sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt))
+        .forEach((o, idx) => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${idx + 1}</td>
+            <td>${o.product ? o.product.name : o.productId}</td>
+            <td>${o.phone}</td>
+            <td style="max-width:280px;">${o.address}</td>
+            <td><span class="pill" style="background:#17204a;">${o.status}</span></td>
+            <td>
+              <select id="s_${o.id}">
+                <option ${o.status==='pending'?'selected':''}>pending</option>
+                <option ${o.status==='confirmed'?'selected':''}>confirmed</option>
+                <option ${o.status==='shipped'?'selected':''}>shipped</option>
+                <option ${o.status==='delivered'?'selected':''}>delivered</option>
+                <option ${o.status==='cancelled'?'selected':''}>cancelled</option>
+              </select>
+              <button onclick="updateStatus('${o.id}')">Update</button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+    }
+
+    async function updateStatus(id) {
+      const sel = document.getElementById('s_' + id);
+      const status = sel.value;
+      const res = await fetch('/admin/api/orders/' + id + '/status', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status }) });
+      const data = await res.json();
+      if (data.ok) loadOrders(); else alert('Failed');
+    }
+
+    async function logout() {
+      await fetch('/admin/logout', { method: 'POST' });
+      location.href = '/';
+    }
+
+    async function tick() {
+      await loadOrders();
+      setTimeout(tick, 5000);
+    }
+
+    loadProducts();
+    tick();
+  </script>
+</body>
+</html>
