@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flexible Admin Panel</title>
+    <link rel="stylesheet" href="admin-styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Login Section -->
+    <div class="login-section" id="loginSection">
+        <div class="login-container">
+            <div class="login-header">
+                <h1><i class="fas fa-mobile-alt"></i> Flexible</h1>
+                <h2>Admin Panel</h2>
+            </div>
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div class="admin-dashboard" id="adminDashboard" style="display: none;">
+        <!-- Header -->
+        <header class="admin-header">
+            <div class="admin-brand">
+                <h1><i class="fas fa-mobile-alt"></i> Flexible Admin</h1>
+            </div>
+            <div class="admin-nav">
+                <button class="nav-btn active" data-tab="upload">Upload Product</button>
+                <button class="nav-btn" data-tab="orders">Orders</button>
+                <button class="nav-btn" data-tab="products">Manage Products</button>
+            </div>
+            <div class="admin-user">
+                <span>Welcome, Admin</span>
+                <button class="btn btn-secondary" onclick="logout()">Logout</button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <!-- Upload Product Tab -->
+            <div class="tab-content active" id="uploadTab">
+                <div class="tab-header">
+                    <h2><i class="fas fa-upload"></i> Upload New Product</h2>
+                </div>
+                <form id="productForm" class="product-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="category">Category:</label>
+                            <select id="category" required>
+                                <option value="">Select Category</option>
+                                <option value="chargers">Chargers</option>
+                                <option value="headphones">Headphones</option>
+                                <option value="cables">Cables</option>
+                                <option value="powerbanks">Power Banks</option>
+                                <option value="cases">Phone Cases</option>
+                                <option value="screen-protectors">Screen Protectors</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="productName">Product Name:</label>
+                            <input type="text" id="productName" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="price">Price (₹):</label>
+                            <input type="number" id="price" min="0" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="discount">Discount (%):</label>
+                            <input type="number" id="discount" min="0" max="100" value="0">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Product Images (ImgBB Links):</label>
+                        <div class="image-inputs">
+                            <input type="url" placeholder="Image 1 URL" id="image1" required>
+                            <input type="url" placeholder="Image 2 URL" id="image2">
+                            <input type="url" placeholder="Image 3 URL" id="image3">
+                            <input type="url" placeholder="Image 4 URL" id="image4">
+                        </div>
+                        <small>Upload images to ImgBB and paste the direct links here</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Description:</label>
+                        <textarea id="description" rows="4" required></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-upload"></i> Upload Product
+                        </button>
+                        <button type="reset" class="btn btn-secondary">Reset Form</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Orders Tab -->
+            <div class="tab-content" id="ordersTab">
+                <div class="tab-header">
+                    <h2><i class="fas fa-shopping-cart"></i> Recent Orders</h2>
+                    <div class="order-filters">
+                        <select id="orderStatusFilter">
+                            <option value="">All Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="confirmed">Confirmed</option>
+                            <option value="shipped">Shipped</option>
+                            <option value="delivered">Delivered</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="orders-list" id="ordersList">
+                    <!-- Orders will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Products Tab -->
+            <div class="tab-content" id="productsTab">
+                <div class="tab-header">
+                    <h2><i class="fas fa-box"></i> Manage Products</h2>
+                    <div class="product-filters">
+                        <select id="productCategoryFilter">
+                            <option value="">All Categories</option>
+                            <option value="chargers">Chargers</option>
+                            <option value="headphones">Headphones</option>
+                            <option value="cables">Cables</option>
+                            <option value="powerbanks">Power Banks</option>
+                            <option value="cases">Phone Cases</option>
+                            <option value="screen-protectors">Screen Protectors</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="products-list" id="productsList">
+                    <!-- Products will be loaded here -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Notification Toast -->
+    <div class="toast" id="toast">
+        <div class="toast-content">
+            <span id="toastMessage"></span>
+            <button class="toast-close" onclick="hideToast()">&times;</button>
+        </div>
+    </div>
+
+    <script src="admin-script.js"></script>
+</body>
+</html>
