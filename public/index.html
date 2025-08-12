@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flexible - Premium Mobile Accessories</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="nav-brand">
+                <h1><i class="fas fa-mobile-alt"></i> Flexible</h1>
+                <p>Premium Mobile Accessories</p>
+            </div>
+            <div class="nav-search">
+                <input type="text" id="searchInput" placeholder="Search products...">
+                <button type="button" id="searchBtn"><i class="fas fa-search"></i></button>
+            </div>
+            <div class="nav-cart">
+                <button class="cart-btn" id="cartBtn">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count" id="cartCount">0</span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Welcome to Flexible</h1>
+            <p>Discover premium mobile accessories at unbeatable prices</p>
+            <div class="hero-buttons">
+                <button class="btn btn-primary" onclick="scrollToProducts()">Shop Now</button>
+                <button class="btn btn-secondary" onclick="scrollToCategories()">View Categories</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories -->
+    <section class="categories" id="categories">
+        <div class="container">
+            <h2>Shop by Category</h2>
+            <div class="category-grid">
+                <div class="category-card" data-category="chargers">
+                    <i class="fas fa-charging-station"></i>
+                    <h3>Chargers</h3>
+                </div>
+                <div class="category-card" data-category="headphones">
+                    <i class="fas fa-headphones"></i>
+                    <h3>Headphones</h3>
+                </div>
+                <div class="category-card" data-category="cables">
+                    <i class="fas fa-usb"></i>
+                    <h3>Cables</h3>
+                </div>
+                <div class="category-card" data-category="powerbanks">
+                    <i class="fas fa-battery-full"></i>
+                    <h3>Power Banks</h3>
+                </div>
+                <div class="category-card" data-category="cases">
+                    <i class="fas fa-mobile-alt"></i>
+                    <h3>Phone Cases</h3>
+                </div>
+                <div class="category-card" data-category="screen-protectors">
+                    <i class="fas fa-shield-alt"></i>
+                    <h3>Screen Protectors</h3>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filters -->
+    <section class="filters">
+        <div class="container">
+            <div class="filter-controls">
+                <div class="filter-group">
+                    <label for="categoryFilter">Category:</label>
+                    <select id="categoryFilter">
+                        <option value="">All Categories</option>
+                        <option value="chargers">Chargers</option>
+                        <option value="headphones">Headphones</option>
+                        <option value="cables">Cables</option>
+                        <option value="powerbanks">Power Banks</option>
+                        <option value="cases">Phone Cases</option>
+                        <option value="screen-protectors">Screen Protectors</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="priceFilter">Price Range:</label>
+                    <select id="priceFilter">
+                        <option value="">All Prices</option>
+                        <option value="0-500">Under ₹500</option>
+                        <option value="500-1000">₹500 - ₹1000</option>
+                        <option value="1000-2000">₹1000 - ₹2000</option>
+                        <option value="2000+">Above ₹2000</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="sortBy">Sort By:</label>
+                    <select id="sortBy">
+                        <option value="newest">Newest First</option>
+                        <option value="price-low">Price: Low to High</option>
+                        <option value="price-high">Price: High to Low</option>
+                        <option value="discount">Highest Discount</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products -->
+    <section class="products" id="products">
+        <div class="container">
+            <h2>Our Products</h2>
+            <div class="products-grid" id="productsGrid">
+                <!-- Products will be loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Order Modal -->
+    <div class="modal" id="orderModal">
+        <div class="modal-content">
+            <span class="close" id="closeModal">&times;</span>
+            <h2>Place Your Order</h2>
+            <form id="orderForm">
+                <div class="form-group">
+                    <label for="customerName">Full Name:</label>
+                    <input type="text" id="customerName" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Mobile Number:</label>
+                    <input type="tel" id="phone" required>
+                </div>
+                <div class="form-group">
+                    <label for="address">Full Address:</label>
+                    <textarea id="address" rows="3" required></textarea>
+                </div>
+                <div class="order-summary">
+                    <h3>Order Summary</h3>
+                    <div id="orderSummary"></div>
+                </div>
+                <button type="submit" class="btn btn-primary">Confirm Order</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3><i class="fas fa-mobile-alt"></i> Flexible</h3>
+                    <p>Your trusted source for premium mobile accessories</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#products">Products</a></li>
+                        <li><a href="#categories">Categories</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact Info</h4>
+                    <p><i class="fas fa-phone"></i> +91 98765 43210</p>
+                    <p><i class="fas fa-envelope"></i> info@flexible.com</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Flexible. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
